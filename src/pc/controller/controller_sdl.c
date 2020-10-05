@@ -13,6 +13,8 @@
 
 #define DEADZONE 4960
 
+#include "../configfile.h"
+
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
 
@@ -78,8 +80,14 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 #endif
 
-    if (rightx < -0x4000) pad->button |= L_CBUTTONS;
-    if (rightx > 0x4000) pad->button |= R_CBUTTONS;
+    if (configInvertCamera == true) {
+        if (rightx < 0x4000) pad->button |= L_CBUTTONS;
+        if (rightx > -0x4000) pad->button |= R_CBUTTONS;
+    } else {
+        if (rightx < -0x4000) pad->button |= L_CBUTTONS;
+        if (rightx > 0x4000) pad->button |= R_CBUTTONS;
+    }
+
     if (righty < -0x4000) pad->button |= U_CBUTTONS;
     if (righty > 0x4000) pad->button |= D_CBUTTONS;
 
@@ -88,8 +96,13 @@ static void controller_sdl_read(OSContPad *pad) {
 
     uint32_t magnitude_sq = (uint32_t)(leftx * leftx) + (uint32_t)(lefty * lefty);
     if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
-        pad->stick_x = leftx / 0x100;
-        int stick_y = -lefty / 0x100;
+        if (configSensitivity >= 1.f) {
+            pad->stick_x = leftx / 0x100;
+            int stick_y = -lefty / 0x100;
+        } else {
+            pad->stick_x = (leftx * configSensitivity) / 0x100;
+            int stick_y = (-lefty * configSensitivity) / 0x100;
+        }
         pad->stick_y = stick_y == 128 ? 127 : stick_y;
     }
 }

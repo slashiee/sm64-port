@@ -54,10 +54,17 @@ static void keyboard_init(void) {
     set_keyboard_mapping(i++, A_BUTTON,     configKeyA);
     set_keyboard_mapping(i++, B_BUTTON,     configKeyB);
     set_keyboard_mapping(i++, Z_TRIG,       configKeyZ);
+
+    if (configInvertCamera == true) {
+        set_keyboard_mapping(i++, R_CBUTTONS,   configKeyCLeft);
+        set_keyboard_mapping(i++, L_CBUTTONS,   configKeyCRight);
+    } else {
+        set_keyboard_mapping(i++, L_CBUTTONS,   configKeyCLeft);
+        set_keyboard_mapping(i++, R_CBUTTONS,   configKeyCRight);
+    }
+
     set_keyboard_mapping(i++, U_CBUTTONS,   configKeyCUp);
-    set_keyboard_mapping(i++, L_CBUTTONS,   configKeyCLeft);
     set_keyboard_mapping(i++, D_CBUTTONS,   configKeyCDown);
-    set_keyboard_mapping(i++, R_CBUTTONS,   configKeyCRight);
     set_keyboard_mapping(i++, R_TRIG,       configKeyR);
     set_keyboard_mapping(i++, START_BUTTON, configKeyStart);
 

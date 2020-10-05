@@ -2,6 +2,10 @@
 #define CONFIGFILE_H
 
 extern bool         configFullscreen;
+extern float        configSensitivity;
+extern bool         configInvertCamera;
+extern bool         configInvertYAxis;
+extern bool         configInvertAim;
 extern unsigned int configKeyA;
 extern unsigned int configKeyB;
 extern unsigned int configKeyStart;

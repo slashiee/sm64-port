@@ -1,5 +1,7 @@
 #include <PR/ultratypes.h>
 
+#include <stdbool.h>
+
 #include "sm64.h"
 #include "behavior_data.h"
 #include "mario_actions_automatic.h"
@@ -16,6 +18,8 @@
 #include "camera.h"
 #include "level_table.h"
 #include "thread6.h"
+
+#include "../pc/configfile.h"
 
 #define POLE_NONE          0
 #define POLE_TOUCHED_FLOOR 1
@@ -711,7 +715,12 @@ s32 act_in_cannon(struct MarioState *m) {
             break;
 
         case 2:
-            m->faceAngle[0] -= (s16)(m->controller->stickY * 10.0f);
+            if (configInvertAim == true) {
+                m->faceAngle[0] += (s16)(m->controller->stickY * 10.0f);
+            } else {
+                m->faceAngle[0] -= (s16)(m->controller->stickY * 10.0f);
+            }
+
             marioObj->oMarioCannonInputYaw -= (s16)(m->controller->stickX * 10.0f);
 
             if (m->faceAngle[0] > 0x38E3) {

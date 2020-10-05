@@ -1,5 +1,7 @@
 #include <PR/ultratypes.h>
 
+#include <stdbool.h>
+
 #include "sm64.h"
 #include "level_update.h"
 #include "memory.h"
@@ -16,6 +18,8 @@
 #include "behavior_data.h"
 #include "level_table.h"
 #include "thread6.h"
+
+#include "../pc/configfile.h"
 
 #define MIN_SWIM_STRENGTH 160
 #define MIN_SWIM_SPEED 16.0f
@@ -282,7 +286,13 @@ static void update_swimming_yaw(struct MarioState *m) {
 }
 
 static void update_swimming_pitch(struct MarioState *m) {
-    s16 targetPitch = -(s16)(252.0f * m->controller->stickY);
+    s16 targetPitch;
+
+    if (configInvertYAxis == true) {
+        targetPitch = +(s16)(252.0f * m->controller->stickY);
+    } else {
+        targetPitch = -(s16)(252.0f * m->controller->stickY);
+    }
 
     s16 pitchVel;
     if (m->faceAngle[0] < 0) {

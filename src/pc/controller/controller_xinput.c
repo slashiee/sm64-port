@@ -3,11 +3,15 @@
 #include <windows.h>
 #include <xinput.h>
 
+#include <stdbool.h>
+
 #include <ultra64.h>
 
 #include "controller_api.h"
 
 #define DEADZONE 4960
+
+#include "../configfile.h"
 
 static void xinput_init(void) {
 }
@@ -26,15 +30,27 @@ static void xinput_read(OSContPad *pad) {
             if (gp->wButtons & XINPUT_GAMEPAD_A) pad->button |= A_BUTTON;
             if (gp->wButtons & XINPUT_GAMEPAD_X) pad->button |= B_BUTTON;
             if (gp->wButtons & XINPUT_GAMEPAD_DPAD_LEFT) pad->button |= L_TRIG;
-            if (gp->sThumbRX < -0x4000) pad->button |= L_CBUTTONS;
-            if (gp->sThumbRX > 0x4000) pad->button |= R_CBUTTONS;
+
+            if (configInvertCamera == true) {
+                if (gp->sThumbRX < 0x4000) pad->button |= L_CBUTTONS;
+                if (gp->sThumbRX > -0x4000) pad->button |= R_CBUTTONS;
+            } else {
+                if (gp->sThumbRX < -0x4000) pad->button |= L_CBUTTONS;
+                if (gp->sThumbRX > 0x4000) pad->button |= R_CBUTTONS;
+            }
+
             if (gp->sThumbRY < -0x4000) pad->button |= D_CBUTTONS;
             if (gp->sThumbRY > 0x4000) pad->button |= U_CBUTTONS;
 
             uint32_t magnitude_sq = (uint32_t)(gp->sThumbLX * gp->sThumbLX) + (uint32_t)(gp->sThumbLY * gp->sThumbLY);
             if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
-                pad->stick_x = gp->sThumbLX / 0x100;
-                pad->stick_y = gp->sThumbLY / 0x100;
+                if (configSensitivity >= 1.f) {
+                    pad->stick_x = gp->sThumbLX / 0x100;
+                    pad->stick_y = gp->sThumbLY / 0x100;
+                } else {
+                    pad->stick_x = (gp->sThumbLX * configSensitivity) / 0x100;
+                    pad->stick_y = (gp->sThumbLY * configSensitivity) / 0x100;
+                }
             }
             break;
         }

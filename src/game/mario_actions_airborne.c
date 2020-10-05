@@ -1,5 +1,7 @@
 #include <PR/ultratypes.h>
 
+#include <stdbool.h>
+
 #include "sm64.h"
 #include "area.h"
 #include "audio/external.h"
@@ -13,6 +15,8 @@
 #include "mario_step.h"
 #include "save_file.h"
 #include "thread6.h"
+
+#include "../pc/configfile.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.animInfo.animFrame;
@@ -301,7 +305,13 @@ void update_flying_yaw(struct MarioState *m) {
 }
 
 void update_flying_pitch(struct MarioState *m) {
-    s16 targetPitchVel = -(s16)(m->controller->stickY * (m->forwardVel / 5.0f));
+    s16 targetPitchVel;
+
+    if (configInvertYAxis == true) {
+        targetPitchVel = +(s16)(m->controller->stickY * (m->forwardVel / 5.0f));
+    } else {
+        targetPitchVel = -(s16)(m->controller->stickY * (m->forwardVel / 5.0f));
+    }
 
     if (targetPitchVel > 0) {
         if (m->angleVel[0] < 0) {
